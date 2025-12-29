@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% if categorized_products %}
     {% for category, products in categorized_products.items() %}
         
         <div class="category-section">
@@ -9,15 +10,33 @@
             
             <div class="products-grid">
                 {% for product in products %}
-                    <div class="machine-img-container">
-                     <a href="{{ url_for('shop.product_detail', product_id=product.id) }}">
-                     <img src="{{ product.image_url }}" 
-                     class="machine-img" 
-                      alt="{{ product.name }}"
-             onerror="this.onerror=null;this.src='https://via.placeholder.com/300?text=No+Image';">
-    </a>
-</div>
+                    <div class="product-card">
 
+                        <!-- الكارت الجديد -->
+                        <a href="{{ url_for('shop.product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
+                            <img src="{{ product.image_url or 'https://via.placeholder.com/300x250?text=No+Image' }}" class="product-img" alt="{{ product.name }}">
+                            <div class="product-body">
+                                <div class="product-title">{{ product.name }}</div>
+                                <div class="product-brand">
+                                    {{ product.details.get('brand') or product.details.get('Brand') or 'General' }}
+                                </div>
+                                
+                                <div class="product-footer">
+                                    <div class="product-price">{{ product.get_display_price() }}</div>
+                                    <a href="{{ url_for('shop.add_to_cart', product_id=product.id) }}" class="btn-add" onclick="event.stopPropagation()">Add +</a>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- كارت الماكينة القديم (لو محتجاه) -->
+                        <div class="machine-img-container">
+                            <a href="{{ url_for('shop.product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url }}" 
+                                     class="machine-img" 
+                                     alt="{{ product.name }}"
+                                     onerror="this.onerror=null;this.src='https://via.placeholder.com/300?text=No+Image';">
+                            </a>
+                        </div>
 
                         <div class="machine-body">
                             <div class="machine-brand">
@@ -25,12 +44,13 @@
                             </div>
                             
                             <a href="{{ url_for('shop.product_detail', product_id=product.id) }}" style="text-decoration: none; color: inherit;">
-                            <h3 class="machine-title">{{ product.name }}</h3>
+                                <h3 class="machine-title">{{ product.name }}</h3>
                             </a>
 
-                            
                             <div class="machine-footer">
-                                <div class="price">${{ "{:,.2f}".format(product.price) }}</div>
+                                <div class="price">
+                                    ${{ "{:,.2f}".format(product.price) }}
+                                </div>
 
                                 <a href="{{ url_for('wishlist.add_to_wishlist', product_id=product.id) }}" 
                                    class="btn-wishlist" 
@@ -39,7 +59,6 @@
                                 </a>
 
                                 <a href="{{ url_for('cart.add_to_cart', product_id=product.id) }}" 
-
                                    class="btn-add-cart" 
                                    title="Add to Cart">
                                     <i class="fa-solid fa-plus"></i>
@@ -52,12 +71,13 @@
             </div>
         </div>
 
-    {% else %}
-        <div class="no-products">
-            <i class="fa-solid fa-gears"></i>
-            <h3>No Machines Found</h3>
-            <p>We are stocking up our warehouse. Check back soon!</p>
-        </div>
     {% endfor %}
+{% else %}
+    <div class="no-products">
+        <i class="fa-solid fa-gears"></i>
+        <h3>No Machines Found</h3>
+        <p>We are stocking up our warehouse. Check back soon!</p>
+    </div>
+{% endif %}
 
 {% endblock %}

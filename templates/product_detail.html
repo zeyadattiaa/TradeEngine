@@ -1,171 +1,265 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div style="max-width: 1100px; margin: 40px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
 
-    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
-        <div style="flex: 1 1 350px; min-width: 300px;">
-            <img src="{{ product.image_url }}"
-                 alt="{{ product.name }}"
-                 style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; border: 1px solid #eee;"
-                 onerror="this.onerror=null;this.src='https://via.placeholder.com/400?text=No+Image';">
+<div style="max-width: 1200px; margin: 0 auto;">
+    
+    <!-- Breadcrumb Navigation -->
+    <div style="margin-bottom: 30px; font-size: 14px; color: var(--secondary-color);">
+        <a href="{{ url_for('shop.home') }}" style="color: var(--secondary-color);">Home</a>
+        <span style="margin: 0 8px;">/</span>
+        <span style="color: var(--secondary-color);">{{ product.category }}</span>
+        <span style="margin: 0 8px;">/</span>
+        <span style="color: var(--primary-color); font-weight: 600;">{{ product.name }}</span>
+    </div>
+
+    <!-- Product Details Section -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-bottom: 60px; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(47, 65, 86, 0.08);">
+        
+        <!-- Left: Product Image -->
+        <div>
+            <img src="{{ product.image_url or 'https://via.placeholder.com/600x500?text=No+Image' }}" 
+                 alt="{{ product.name }}" 
+                 style="width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         </div>
 
-        <div style="flex: 1 1 350px; min-width: 300px;">
-            <h1 style="margin-bottom: 10px; color: var(--primary-color);">
+        <!-- Right: Product Info -->
+        <div style="display: flex; flex-direction: column;">
+            
+            <!-- Brand -->
+            <div style="color: var(--secondary-color); font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600;">
+                {{ product.details.get('brand', product.details.get('Brand', 'General')) }}
+            </div>
+
+            <!-- Product Name -->
+            <h1 style="font-size: 32px; color: var(--primary-color); margin-bottom: 15px; font-weight: 800;">
                 {{ product.name }}
             </h1>
 
-            <p style="margin-bottom: 10px; color: #666;">
-                Category:
-                <span style="font-weight: 600; color: var(--secondary-color);">
-                    {{ product.category }}
+            <!-- Rating Section -->
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                <div style="display: flex; gap: 5px;">
+                    {% if avg_rating > 0 %}
+                        {% for i in range(5) %}
+                            {% if i < avg_rating|int %}
+                                <i class="fa-solid fa-star" style="color: #FFD700; font-size: 18px;"></i>
+                            {% else %}
+                                <i class="fa-regular fa-star" style="color: #ddd; font-size: 18px;"></i>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for i in range(5) %}
+                            <i class="fa-regular fa-star" style="color: #ddd; font-size: 18px;"></i>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <span style="color: var(--secondary-color); font-size: 14px;">
+                    {% if avg_rating > 0 %}
+                        {{ "%.1f"|format(avg_rating) }}
+                    {% else %}
+                        No ratings yet
+                    {% endif %}
+                    ({{ reviews_count }} {% if reviews_count == 1 %}review{% else %}reviews{% endif %})
                 </span>
-            </p>
-
-            {% if avg_rating %}
-                <p style="margin-bottom: 10px; color: #f59e0b;">
-                    ★ {{ "%.1f"|format(avg_rating) }} / 5
-                    <span style="color: #666; font-size: 14px;">
-                        ({{ reviews_count }} review{{ '' if reviews_count == 1 else 's' }})
-                    </span>
-                </p>
-            {% else %}
-                <p style="margin-bottom: 10px; color: #666; font-size: 14px;">
-                    No reviews yet.
-                </p>
-            {% endif %}
-
-            <h2 style="margin: 20px 0; color: var(--primary-color);">
-                {{ product.get_display_price() }}
-            </h2>
-
-            {% if product.is_in_stock() %}
-                <p style="color: #16a34a; font-weight: 600; margin-bottom: 15px;">
-                    In stock ({{ product.stock_quantity }} available)
-                </p>
-            {% else %}
-                <p style="color: var(--danger-color); font-weight: 600; margin-bottom: 15px;">
-                    Out of stock
-                </p>
-            {% endif %}
-
-            <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
-                <a href="{{ url_for('cart.add_to_cart', product_id=product.id) }}"
-                   class="btn-add"
-                   style="padding: 12px 25px; font-size: 15px;">
-                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                </a>
-
-                <a href="{{ url_for('wishlist.add_to_wishlist', product_id=product.id) }}"
-                   class="btn-add"
-                   style="padding: 12px 25px; font-size: 15px; background: white; color: var(--secondary-color); border: 1px solid var(--secondary-color);">
-                    <i class="fa-regular fa-heart"></i> Add to Wishlist
-                </a>
             </div>
+
+            <!-- Price -->
+            <div style="font-size: 36px; font-weight: 800; color: var(--primary-color); margin-bottom: 20px;">
+                {{ product.get_display_price() }}
+            </div>
+
+            <!-- Stock Status -->
+            <div style="margin-bottom: 25px;">
+                {% if product.is_in_stock() %}
+                    <span style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                        <i class="fa-solid fa-check-circle"></i> In Stock ({{ product.stock_quantity }} available)
+                    </span>
+                {% else %}
+                    <span style="background: #f8d7da; color: #721c24; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                        <i class="fa-solid fa-times-circle"></i> Out of Stock
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Divider -->
+            <hr style="border: none; height: 1px; background: var(--accent-color); margin: 25px 0;">
+
+            <!-- Quantity + Actions -->
+            {% if product.is_in_stock() %}
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: var(--primary-color);">Quantity:</label>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button onclick="decreaseQty()" style="width: 40px; height: 40px; border: 2px solid var(--accent-color); background: white; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; color: var(--primary-color);">-</button>
+                    <input type="number" id="quantity" value="1" min="1" max="{{ product.stock_quantity }}" readonly style="width: 60px; text-align: center; font-size: 18px; font-weight: 600; border: 2px solid var(--accent-color); border-radius: 8px; padding: 8px;">
+                    <button onclick="increaseQty()" style="width: 40px; height: 40px; border: 2px solid var(--accent-color); background: white; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; color: var(--primary-color);">+</button>
+                </div>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <a href="#" onclick="addToCart(event)" style="display: block; background: var(--primary-color); color: white; padding: 16px; text-align: center; border-radius: 12px; font-size: 18px; font-weight: 700; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 12px rgba(47, 65, 86, 0.2);">
+                <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+            </a>
+
+            <!-- Add to Wishlist Button -->
+            <a href="{{ url_for('wishlist.add_to_wishlist', product_id=product.id) }}"
+               style="display: block; margin-top: 10px; background: white; color: var(--secondary-color); padding: 12px 16px; text-align: center; border-radius: 12px; font-size: 16px; font-weight: 600; text-decoration: none; border: 1px solid var(--secondary-color);">
+                <i class="fa-regular fa-heart"></i> Add to Wishlist
+            </a>
+
+            {% else %}
+            <button disabled style="display: block; width: 100%; background: #ddd; color: #999; padding: 16px; text-align: center; border-radius: 12px; font-size: 18px; font-weight: 700; border: none; cursor: not-allowed;">
+                Out of Stock
+            </button>
+            {% endif %}
+
         </div>
     </div>
 
-    <div style="margin-top: 40px; display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1.5fr); gap: 30px;">
-        <div>
-            <h3 style="margin-bottom: 15px; color: var(--primary-color);">
-                Specifications
-            </h3>
-            {% if product.details %}
-                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                    <tbody>
-                    {% for key, value in product.details.items() %}
-                        <tr>
-                            <td style="padding: 8px 10px; border-bottom: 1px solid #eee; font-weight: 600; width: 35%; color: #555;">
-                                {{ key }}
-                            </td>
-                            <td style="padding: 8px 10px; border-bottom: 1px solid #eee; color: #444;">
-                                {{ value }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p style="color: #777;">No extra specifications available for this product.</p>
-            {% endif %}
+    <!-- Product Details / Specifications Section -->
+    {% if product.details %}
+    <div style="background: white; padding: 40px; border-radius: 15px; margin-bottom: 40px; box-shadow: 0 5px 20px rgba(47, 65, 86, 0.08);">
+        <h2 style="color: var(--primary-color); border-left: 5px solid var(--secondary-color); padding-left: 15px; margin-bottom: 25px; font-size: 24px;">
+            Product Specifications
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            {% for key, value in product.details.items() %}
+                {% if key.lower() not in ['brand'] %}
+                <div style="padding: 15px; background: var(--bg-color); border-radius: 8px;">
+                    <div style="font-weight: 600; color: var(--secondary-color); margin-bottom: 5px; text-transform: capitalize;">{{ key }}</div>
+                    <div style="color: var(--primary-color); font-size: 16px;">{{ value }}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
         </div>
+    </div>
+    {% endif %}
 
-        <div>
-            <h3 style="margin-bottom: 15px; color: var(--primary-color);">
-                Reviews
-            </h3>
+    <!-- Reviews Section -->
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(47, 65, 86, 0.08);">
+        <h2 style="color: var(--primary-color); border-left: 5px solid var(--secondary-color); padding-left: 15px; margin-bottom: 30px; font-size: 24px;">
+            Customer Reviews ({{ reviews_count }})
+        </h2>
 
-            {% if reviews %}
-                <div style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
-                    {% for review in reviews %}
-                        <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong>{{ review.username or 'User ' ~ review.user_id }}</strong>
-                                <span style="color: #f59e0b; font-size: 14px;">
-                                    ★ {{ review.rating }}/5
-                                </span>
-                            </div>
-                            {% if review.comment %}
-                                <p style="margin-top: 5px; font-size: 14px; color: #555;">
-                                    {{ review.comment }}
-                                </p>
-                            {% endif %}
-                            <p style="margin-top: 3px; font-size: 11px; color: #999;">
-                                {{ review.created_at }}
-                            </p>
-                        </div>
+        <!-- Add Review Form -->
+        {% if session.get('user_id') %}
+        <div style="background: var(--bg-color); padding: 30px; border-radius: 12px; margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Write a Review</h3>
+            <form action="{{ url_for('shop.add_review', product_id=product.id) }}" method="POST">
+                
+                <!-- Rating -->
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600;">Rating:</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <input type="radio" name="rating" value="5" id="star5" required>
+                        <label for="star5" style="cursor: pointer;">⭐⭐⭐⭐⭐ (5)</label>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <input type="radio" name="rating" value="4" id="star4">
+                        <label for="star4" style="cursor: pointer;">⭐⭐⭐⭐ (4)</label>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <input type="radio" name="rating" value="3" id="star3">
+                        <label for="star3" style="cursor: pointer;">⭐⭐⭐ (3)</label>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <input type="radio" name="rating" value="2" id="star2">
+                        <label for="star2" style="cursor: pointer;">⭐⭐ (2)</label>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="radio" name="rating" value="1" id="star1">
+                        <label for="star1" style="cursor: pointer;">⭐ (1)</label>
+                    </div>
+                </div>
+
+                <!-- Comment -->
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600;">Your Review:</label>
+                    <textarea name="comment" rows="4" placeholder="Share your experience with this product..." style="width: 100%; padding: 12px; border: 2px solid var(--accent-color); border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" style="background: var(--primary-color); color: white; padding: 12px 30px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px;">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-bottom: 30px; color: #856404; border: 1px solid #ffeaa7;">
+            <i class="fa-solid fa-info-circle"></i> Please <a href="{{ url_for('auth.login') }}" style="color: var(--primary-color); font-weight: 600;">login</a> to write a review.
+        </div>
+        {% endif %}
+
+        <!-- Display Reviews -->
+        {% if reviews %}
+            {% for review in reviews %}
+            <div style="border-bottom: 1px solid var(--accent-color); padding: 25px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="font-weight: 700; color: var(--primary-color); font-size: 16px;">
+                        <i class="fa-solid fa-user-circle"></i> {{ review.username }}
+                    </div>
+                    <div style="color: #999; font-size: 14px;">{{ review.created_at }}</div>
+                </div>
+                
+                <!-- Rating Stars -->
+                <div style="display: flex; gap: 3px; margin-bottom: 10px;">
+                    {% for i in range(5) %}
+                        {% if i < review.rating %}
+                            <i class="fa-solid fa-star" style="color: #FFD700; font-size: 16px;"></i>
+                        {% else %}
+                            <i class="fa-regular fa-star" style="color: #ddd; font-size: 16px;"></i>
+                        {% endif %}
                     {% endfor %}
                 </div>
-            {% else %}
-                <p style="color: #777; font-size: 14px;">No reviews for this product yet.</p>
-            {% endif %}
+
+                <!-- Comment -->
+                {% if review.comment %}
+                <p style="color: var(--text-color); line-height: 1.6; margin: 0;">{{ review.comment }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+        <div style="text-align: center; padding: 40px; color: #999;">
+            <i class="fa-regular fa-comment" style="font-size: 50px; margin-bottom: 15px; color: var(--accent-color);"></i>
+            <p>No reviews yet. Be the first to review this product!</p>
         </div>
+        {% endif %}
     </div>
 
+    <!-- Back to shop -->
     <div style="margin-top: 30px;">
         <a href="{{ url_for('shop.home') }}"
            style="color: #666; text-decoration: none; font-weight: bold;">
             <i class="fa-solid fa-arrow-left"></i> Back to Shop
         </a>
     </div>
+
 </div>
+
+<!-- JavaScript for Quantity Selector -->
+<script>
+    const maxQty = parseInt("{{ product.stock_quantity }}");
+    
+    function increaseQty() {
+        let qtyInput = document.getElementById('quantity');
+        let currentQty = parseInt(qtyInput.value);
+        if (currentQty < maxQty) {
+            qtyInput.value = currentQty + 1;
+        }
+    }
+    
+    function decreaseQty() {
+        let qtyInput = document.getElementById('quantity');
+        let currentQty = parseInt(qtyInput.value);
+        if (currentQty > 1) {
+            qtyInput.value = currentQty - 1;
+        }
+    }
+    
+    function addToCart(event) {
+        event.preventDefault();
+        let productId = "{{ product.id }}";
+        window.location.href = "{{ url_for('cart.add_to_cart', product_id=0) }}".replace('0', productId);
+    }
+</script>
+
 {% endblock %}
-{% if session.get('user_id') %}
-    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
-        <h4 style="margin-bottom: 10px; color: var(--primary-color);">
-            Add your review
-        </h4>
-        <form method="POST" action="{{ url_for('review.add_review', product_id=product.id) }}">
-            <div style="margin-bottom: 10px;">
-                <label style="font-size: 14px; font-weight: 600;">Rating (1–5)</label>
-                <select name="rating" required
-                        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                    <option value="">Choose rating</option>
-                    <option value="5">5 - Excellent</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="3">3 - Good</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="1">1 - Poor</option>
-                </select>
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label style="font-size: 14px; font-weight: 600;">Comment (optional)</label>
-                <textarea name="comment" rows="3"
-                          style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;"></textarea>
-            </div>
-
-            <button type="submit"
-                    class="btn-add"
-                    style="padding: 8px 18px; font-size: 14px;">
-                Submit Review
-            </button>
-        </form>
-    </div>
-{% else %}
-    <p style="margin-top: 15px; font-size: 13px; color: #777;">
-        Please <a href="{{ url_for('auth.login') }}" style="color: var(--secondary-color); font-weight: 600;">login</a> to add a review.
-    </p>
-{% endif %}
-
