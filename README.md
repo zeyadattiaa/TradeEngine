@@ -1,255 +1,185 @@
-# 🛒 E-Commerce Management System
+# 🏭 TradeEngine
 
-## 📌 Project Overview
+[![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-2.x-orange)](https://flask.palletsprojects.com/)
 
-This project is a full-featured E-Commerce Management System developed using **Python**, **Flask**, and **SQLite**, following **Object-Oriented Programming (OOP)** principles and a **layered architecture**.
+**Platform:** Web (Flask / Python)  
+**Database:** SQLite  
+**Architecture:** MVC + Blueprint Modular Design  
 
-The system supports:
-
-- User authentication and role management
-- Product catalog and detailed product pages
-- Stock and inventory control
-- Shopping cart and order processing
-- Review and rating system
-- Search and sorting functionalities
-- REST-style API endpoints for product browsing
+TradeEngine is a web-based marketplace platform designed to facilitate buying, selling, and managing industrial machines. Users can browse products, manage shopping carts and wishlists, leave reviews, and securely checkout using multiple payment methods.
 
 ---
 
-## 🏗️ System Architecture
+## 📱 About The Project
 
-The project follows a modular architecture with clear separation of concerns:
-
-Presentation Layer (Flask / Routes)
-↓
-Business Logic Layer (Models)
-↓
-Data Access Layer (Repositories)
-↓
-Database (SQLite)
+This project was developed as the final project for ITI (Information Technology Institute). TradeEngine provides an intuitive interface for users to explore machines, manage orders, and interact with the platform securely. Admins can manage products, view orders, and monitor platform activity.
 
 ---
 
-## 📂 Project Structure
+## ✨ Key Features
 
+- 🔐 **User Authentication** – Secure login and registration with session management.
+- 🏠 **Dynamic Product Catalog** – Browse machines by category, brand, and search queries.
+- 🛒 **Shopping Cart Management** – Add, remove, and modify items in your cart.
+- ❤️ **Wishlist** – Save favorite products for later purchase.
+- 📝 **Customer Reviews** – Rate products and leave comments.
+- 💳 **Checkout & Payment** – Supports credit card payments and cash-on-delivery.
+- 📦 **Order History** – View past orders with full details.
+- 🌙 **Responsive Design** – Works on desktop and mobile browsers.
+
+---
+
+## 🛠️ Built With
+
+**Architecture & Design Patterns:**
+
+- MVC Pattern via Flask Blueprints
+- Repository Pattern for database operations
+- Template Inheritance for HTML layout consistency
+- Jinja2 for dynamic HTML rendering
+
+**Libraries & Technologies:**
+
+| Technology | Purpose |
+|------------|---------|
+| Python 3 | Core backend logic |
+| Flask | Web framework |
+| Flask-Login | User authentication management |
+| SQLite | Local database storage |
+| Jinja2 | HTML templating |
+| FontAwesome | UI icons |
+| HTML/CSS/JS | Frontend rendering and interactivity |
+
+---
+
+## 📸 Screenshots
+
+- **Home Page** – Browse categories and products  
+- **Product Detail** – View machine specs and customer reviews  <img width="1600" height="798" alt="image" src="https://github.com/user-attachments/assets/5fd0abd1-cf3e-4a6b-b783-013651b7368f" />
+
+- **Customer Reviews** – Review Rating  <img width="1600" height="803" alt="image" src="https://github.com/user-attachments/assets/9d05e353-7dac-4a77-96fe-31ee27064e37" />
+<img width="1600" height="801" alt="image" src="https://github.com/user-attachments/assets/8adb039e-2062-40e1-ab5f-d07fe4bdf364" />
+
+- **Cart Page** – Manage selected products  <img width="1600" height="804" alt="image" src="https://github.com/user-attachments/assets/240d9535-a69e-4d2d-8ddb-9f78ea5a09ab" />
+
+- **Wishlist** – Wishlist Page <img width="1600" height="797" alt="image" src="https://github.com/user-attachments/assets/7566d279-37b2-4b15-b1ae-e7d3422504f7" />
+
+
+- **Checkout Page** – Complete orders securely  <img width="1600" height="815" alt="image" src="https://github.com/user-attachments/assets/3f7d428d-74f9-4120-873f-9936f86acf75" />
+
+
+- **Payment** – Payement Method <img width="1600" height="800" alt="image" src="https://github.com/user-attachments/assets/66450b70-cd5c-4fe7-84d9-f507a8e16e90" />
+
+- **Order Confirmation** – Order Success! <img width="1600" height="783" alt="image" src="https://github.com/user-attachments/assets/56aec216-ba53-46b3-87cb-23590a3ffbf8" />
+
+
+
+---
+
+## 🏗️ Project Structure
 ```
-project/
+TradeEngine/
 │
 ├── app.py
+├── payment_processor.py
+├── README.md
+├── .gitignore
+│
 ├── Database/
-│ ├── db_manager.py
-│ ├── schema.sql
-│ └── Repositories/
-│ ├── user_repo.py
-│ ├── product_repo.py
-│ ├── order_repo.py
-│ └── review_repo.py
+│   ├── db_manager.py
+│   ├── schema.sql
+│   ├── TradeEngine.db
+│   └── Repositories/
+│       ├── user_repo.py
+│       ├── product_repo.py
+│       ├── cart_repo.py
+│       ├── order_repo.py
+│       ├── review_repo.py
+│       └── wishlist_repo.py
 │
 ├── models/
-│ ├── user_model.py
-│ ├── product_model.py
-│ ├── product_base.py
-│ ├── detailed_product.py
-│ ├── detailed_product_types.py
-│ ├── review_system.py
-│ ├── catalog.py
-│ └── search_engine.py
+│   ├── __init__.py
+│   ├── user_model.py
+│   ├── product_model.py
+│   ├── shopping_cart.py
+│   ├── cart_item.py
+│   ├── order.py
+│   ├── payment_processor.py
+│   ├── review_model.py
+│   ├── wishlist.py
+│   └── wishlist_item.py
 │
 ├── routes/
-│ ├── auth.py
-│ └── shop.py
+│   ├── __init__.py
+│   ├── auth_routes.py
+│   ├── product_route.py
+│   ├── admin_routes.py
+│   ├── cart_routes.py
+│   ├── wishlist_routes.py
+│   ├── review_routes.py
+│   ├── checkout_routes.py
+│   └── html_checkout_routes.py
+│
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── images/
 │
 └── templates/
+    ├── layout.html
+    ├── layout_auth.html
+    ├── index.html
+    ├── cart.html
+    ├── checkout.html
+    ├── wishlist.html
+    ├── orders.html
+    ├── product_detail.html
+    ├── order_success.html
+    ├── order_error.html
+    │
+    ├── auth/
+    │   ├── login.html
+    │   └── register.html
+    │
+    └── admin/
+        ├── dashboard.html
+        ├── products.html
+        └── add_edit_product.html
+
 ```
 
----
+## 📋 Features Implementation
 
-## 👤 User Management
+### Authentication Flow
+- Email/password login and registration
+- Session-based authentication
+- Secure logout
 
-**User Roles:**
+### Data Management
+- Repository pattern for database operations
+- Dynamic product listings and user cart management
 
-- Customer
-- Admin
-
-**Features:**
-
-- Secure registration and login
-- Password hashing using `werkzeug.security`
-- Role-based behavior
-- User profile updates and deletion
-
-**Key Classes:**
-
-- `User`
-- `Customer`
-- `Admin`
+### UI/UX
+- Responsive HTML templates
+- Interactive cart, wishlist, and checkout pages
+- Star rating system for reviews
 
 ---
 
-## 📦 Product Management
-
-### Base Product Model
-
-The system uses an abstract base class to define common product attributes:
-
-**Product (Abstract)**
-
-**Attributes:**
-
-- `id`
-- `name`
-- `price`
-- `image_url`
-- `category`
+## 🎯 Future Enhancements
+- Integrate real payment gateways (Stripe/PayPal)
+- Multi-language support
+- Admin dashboard analytics
+- Advanced search and filtering
+- Email notifications for orders
 
 ---
+## 🤝 Team Contributors
 
-### 🧩 Product Details Module
-
-**Class Hierarchy:**
-
-```text
-Product (Abstract)
-│
-▼
-DetailedProduct
-│
-├── DetailedComputerProduct
-├── DetailedPrinterProduct
-├── DetailedScannerProduct
-└── DetailedIndustrialMachineProduct
-```
-
-**DetailedProduct Responsibilities:**
-
-- Stock management  
-- Review system integration  
-- Full product detail generation  
-
-**Product-Specific Implementations:**
-
-| Product Type            | Additional Attributes           |
-|-------------------------|--------------------------------|
-| Computer                | brand, cpu, ram, storage       |
-| Printer                 | brand, type, connectivity      |
-| Scanner                 | brand, resolution, type        |
-| IndustrialMachine       | brand, power, usage_type       |
-
+- **Zeyad Ashraf Tawfik**
+- **Mona Mohamed Awad**
+- **Nouran Wael ELsharkawy**
+- **Nancy Ahmed Abd El-fattah**
+- **Hussain Sabri Youssef**
 ---
-
-## 📊 Stock Management
-
-Each product contains a stock quantity with validation.
-
-**Stock Status Rules:**
-
-| Quantity | Status             |
-|----------|------------------|
-| 0        | Out of stock      |
-| 1–5      | Limited stock     |
-| >5       | In stock          |
-
-Stock status is automatically included in product details.
-
----
-
-## ⭐ Review & Rating System
-
-Each detailed product includes an independent `ReviewSystem`.
-
-**Features:**
-
-- Add reviews with rating (1–5)
-- Calculate average rating
-- Count total reviews
-- Review data is returned as part of product details
-
----
-
-## 🛒 Shopping Cart
-
-- Cart is stored in the user session
-- Supports adding, incrementing, and clearing items
-- Stock availability is validated before adding items
-
----
-
-## 🧾 Order Management
-
-**Order Processing:**
-
-- Create orders from cart items
-- Store order headers and order items separately
-- Maintain purchase price history
-- Support transactional integrity using commits and rollbacks
-
-**Tables:**
-
-- `orders`
-- `order_items`
-
----
-
-## 🔍 Search & Sorting
-
-**Search Features:**
-
-- Keyword-based product search
-- Category-based browsing
-
-**Sorting Options:**
-
-- Price (ascending / descending)
-- Name (A–Z / Z–A)
-- Creation date
-
----
-
-## 🗄️ Database Design
-
-The database uses SQLite with enforced foreign key constraints.
-
-**Main Tables:**
-
-- `users`
-- `products`
-- `orders`
-- `order_items`
-- `reviews`
-
-All relationships maintain referential integrity.
-
----
-
-**Notes:**
-
-- JSON used in `users.specific_info` and `products.details` for flexible data storage.  
-- Foreign keys with `ON DELETE CASCADE` / `ON DELETE SET NULL` for data integrity.  
-
----
-
-## 🧠 Design Principles
-
-- Object-Oriented Programming: Inheritance, Polymorphism, Encapsulation  
-- Repository pattern for database access  
-- Modular and maintainable code  
-- Validation for inputs: price ≥ 0, stock ≥ 0, rating 1–5, email/password formats  
-
----
-
-## 🚀 Future Enhancements
-
-- Pagination and filtering  
-- Enhanced semantic search  
-
----
-
-## ✅ Conclusion
-
-Comprehensive E-Commerce project featuring:
-
-- Advanced product modeling  
-- Integrated review system  
-- Shopping cart and order management with transaction integrity  
-- Dynamic search and sorting  
-- Ready for frontend integration or API extension
