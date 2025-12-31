@@ -78,7 +78,7 @@ def add_review(product_id):
     return redirect(url_for('shop.product_detail', product_id=product_id))
 
 # ==========================================
-# Add to Cart (SESSION cart – تفضّلي سايبه كما هو)
+# Add to Cart
 # ==========================================
 @shop_bp.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
